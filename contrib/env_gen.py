@@ -11,7 +11,7 @@ password = "".join(random.sample(chars, size))
 CONFIG_STRING = """
 DEBUG=True
 SECRET_KEY=%s
-ALLOWED_HOSTS=127.0.0.1, .localhost
+ALLOWED_HOSTS=127.0.0.1, .localhost, 8000-giuferreira-coreuidjang-k3kpcc08v8x.ws-us99.gitpod.io
 
 #DATABASE_URL=postgres://USER:PASSWORD@HOST:PORT/NAME
 #DB_NAME=
