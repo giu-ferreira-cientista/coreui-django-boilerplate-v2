@@ -65,3 +65,7 @@ pip install -r requirements.txt
 python contrib/env_gen.py
 python manage.py migrate
 ```
+
+## Rodando depois de configurado
+source .venv/bin/activate
+python manage.py runserver

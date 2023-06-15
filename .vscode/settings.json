@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "dash",
+            "database": "${workspaceFolder:coreui-django-boilerplate-v2}/db.sqlite3"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
