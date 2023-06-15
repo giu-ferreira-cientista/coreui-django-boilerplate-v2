@@ -3,12 +3,61 @@
 {% load static %}
 
 {% block content %}
-<!-- Members -->
-{% include "dashboard/members.html" %}
-<!-- Graphic -->
-{% include "dashboard/traffic.html" %}
-<!-- Social-->
-{% include "dashboard/social.html" %}
-<!-- Traffic & Sales -->
-{% include "dashboard/traffic_sales.html" %}
+<div class="card-group mb-4">
+    <!-- Card Usuário -->
+    <div class="card">
+        <div class="card-body">
+        <div class="h1 text-muted text-right mb-4">
+            <i class="icon-people"></i>
+        </div>
+        <div class="text-value">{{ usuarios|length }}</div>
+        <small class="text-muted text-uppercase font-weight-bold">Usuários</small>
+        <div class="progress progress-xs mt-3 mb-0">
+            <div class="progress-bar bg-info" role="progressbar" width="80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-body">
+          Lista:
+        </div>
+      </div>
+      <!-- Card Todos Usuarios -->
+    {% for usuario in usuarios %}
+    <div class="card">
+      <div class="card-body">
+        {{usuario.nome}}
+      </div>
+    </div>
+    {% endfor %}
+    
+
+    <!-- Card Empréstimo -->
+    {% for emprestimo in emprestimos %}
+    <div class="card">
+      <div class="card-body">
+        <!-- Conteúdo do card Empréstimo -->
+      </div>
+    </div>
+    {% endfor %}
+  
+    <!-- Card Reserva -->
+    {% for reserva in reservas %}
+    <div class="card">
+      <div class="card-body">
+        <!-- Conteúdo do card Reserva -->
+      </div>
+    </div>
+    {% endfor %}
+  
+    <!-- Card Equipamento -->
+    {% for equipamento in equipamentos %}
+    <div class="card">
+      <div class="card-body">
+        <!-- Conteúdo do card Equipamento -->
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 {% endblock content %}

@@ -66,6 +66,38 @@ python contrib/env_gen.py
 python manage.py migrate
 ```
 
+## Instalando o postgresql
+pip install psycopg2
+sudo apt update
+sudo apt-get install postgresql
+
+
+
 ## Rodando depois de configurado
 source .venv/bin/activate
 python manage.py runserver
+sudo service postgresql status
+sudo service postgresql start
+psql -U postgres
+"postgres"
+CREATE USER myuser WITH PASSWORD 'mypassword';
+CREATE DATABASE mydatabase;
+GRANT ALL PRIVILEGES ON DATABASE mydatabase TO myuser;
+"Edit Settings file"
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+python manage.py migrate
+
+## A cada model criado 
+python manage.py makemigrations
+python manage.py migrate

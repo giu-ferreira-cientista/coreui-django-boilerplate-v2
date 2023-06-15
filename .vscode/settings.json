@@ -5,6 +5,15 @@
             "driver": "SQLite",
             "name": "dash",
             "database": "${workspaceFolder:coreui-django-boilerplate-v2}/db.sqlite3"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "dash",
+            "database": "mydatabase",
+            "username": "myuser"
         }
     ],
     "sqltools.useNodeRuntime": true

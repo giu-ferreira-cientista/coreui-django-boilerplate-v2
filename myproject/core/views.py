@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Usuario, Emprestimo, Reserva, Equipamento
 
 
 def index(request):
@@ -20,10 +21,27 @@ def _create(request):
     template_name = '_form.html'
     return render(request, template_name)
 
-
 def dashboard(request):
-    template_name = 'dashboard.html'
-    return render(request, template_name)
+    usuarios = Usuario.objects.all()
+    emprestimos = Emprestimo.objects.all()
+    reservas = Reserva.objects.all()
+    equipamentos = Equipamento.objects.all()
+
+    total_usuarios = usuarios.count()  # Total de usuários
+
+    context = {
+        'usuarios': usuarios,
+        'emprestimos': emprestimos,
+        'reservas': reservas,
+        'equipamentos': equipamentos,
+        'total_usuarios': total_usuarios
+    }
+
+    return render(request, 'dashboard.html', context)
+
+#def dashboard(request):
+#    template_name = 'dashboard.html'
+#    return render(request, template_name)
 
 
 def breadcrumb(request):
