@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="card">
   <div class="card-header">Equipamento
@@ -8,13 +9,25 @@
       <i class="fa fa-save"></i> Save</a>
   </div>
   <div class="card-body">
-    <form method="post" action="{% if equipamento.id %}{% url 'core:editar_equipamento' equipamento.id %}{% else %}{% url 'core:criar_equipamento' %}{% endif %}" enctype="multipart/form-data">
+    <form id="form-equipamento" method="post" action="{% if equipamento.id %}{% url 'core:editar_equipamento' equipamento.id %}{% else %}{% url 'core:criar_equipamento' %}{% endif %}" enctype="multipart/form-data">
       {% csrf_token %}
+      <div class="form-group">
+        {% if equipamento.id %}
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-barcode"></i>
+            </span>
+          </div>
+          <input class="form-control" style="background-color: #f8f9fa;" id="id" type="text" name="id" value="{{ equipamento.id }}" readonly>
+        </div>
+        {% endif %}
+      </div>
       <div class="form-group">
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">
-              <i class="fa fa-user"></i>
+              <i class="fa fa-video-camera"></i>
             </span>
           </div>
           <input class="form-control" id="nome" type="text" name="nome" placeholder="Nome" value="{{ equipamento.nome }}">
@@ -24,7 +37,7 @@
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">
-              <i class="fa fa-asterisk"></i>
+              <i class="fa fa-edit"></i>
             </span>
           </div>
           <select class="form-control" id="status" name="status">
@@ -37,23 +50,38 @@
       </div>
       <div class="form-group">
         <label for="foto">Foto do Equipamento</label>
-        <input type="file" class="form-control-file" id="foto" name="foto">
+        <input type="file" class="form-control-file" id="foto" name="foto" onchange="exibirFoto(this)">
       </div>
       <div class="form-group">
         {% if equipamento.foto %}
-          <img src="{{ foto_equipamento }}" alt="Foto do Equipamento" style="max-width: 200px;">
-          <div class="mt-2">          
+          <div class="mt-2 d-flex flex-column align-items-center" style="width: 200px;">
+            <img id="foto-preview" src="{{ foto_equipamento }}" alt="Foto do Equipamento" style="max-width: 200px;">            
             <a href="#" class="btn btn-sm btn-danger" onclick="confirmarRemoverFoto({{ equipamento.id }})">Remover Foto</a>
           </div>
+        {% else %}
+          <img id="foto-preview" src="{% static 'img/equipments/default.jpg' %}" alt="Foto do Equipamento" style="max-width: 200px;">
         {% endif %}
       </div>
       <div class="form-group form-actions">
-        <button class="btn btn-sm btn-success" type="submit">{% if equipamento.id %}Salvar{% else %}Criar{% endif %}</button>
-      </div>
+        <button class="btn btn-sm btn-success" type="button" onclick="confirmarSalvar()">{% if equipamento.id %}Salvar{% else %}Criar{% endif %}</button>
+        {% if equipamento.id and equipamento.status != 'Excluído' %}
+          <button class="btn btn-sm btn-danger" type="button" onclick="confirmarExclusao()">Excluir</button>
+        {% endif %}
+ </div>
     </form>
   </div>  
 </div>
 <script>
+  function exibirFoto(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('foto-preview').src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
   function confirmarRemoverFoto(equipamentoId) {
     if (confirm('Tem certeza de que deseja remover a foto?')) {
       // Enviar uma solicitação POST para o servidor para remover a foto
@@ -75,6 +103,30 @@
       .catch(error => {
         console.error('Ocorreu um erro ao remover a foto', error);
       });
+    }
+  }
+</script>
+{% if equipamento.id %}
+<script>
+  function confirmarExclusao() {
+    if (confirm("Tem certeza que deseja excluir o equipamento?")) {
+      // Redirecionar para a view de desabilitar_equipamento
+      window.location.href = "{% url 'core:desabilitar_equipamento' equipamento.id %}";
+    }
+  }
+</script>
+{% endif %}
+<script>
+  function confirmarSalvar() {
+    var status = document.getElementById('status').value;
+    if (status === 'Excluído') {
+      if (confirm("Tem certeza que deseja salvar o equipamento com o status 'Excluído'?")) {
+        // Submeter o formulário para salvar o equipamento
+        document.getElementById('form-equipamento').submit();
+      }
+    } else {
+      // Submeter o formulário para salvar o equipamento
+      document.getElementById('form-equipamento').submit();
     }
   }
 </script>

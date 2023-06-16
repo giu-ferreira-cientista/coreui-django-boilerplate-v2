@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Usuario, Emprestimo, Reserva, Equipamento
 import os
 import uuid
+import shutil
+
 
 def index(request):
     template_name = 'index.html'
@@ -222,30 +224,27 @@ def invoice(request):
     template_name = 'invoice.html'
     return render(request, template_name)
 
+from django.shortcuts import redirect, render
+
 def editar_equipamento(request, equipamento_id):
     equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
 
     if request.method == 'POST':
         equipamento.nome = request.POST['nome']
         equipamento.status = request.POST['status']
-        foto = request.FILES.get('foto')  # Obtém o arquivo de imagem enviado
+        foto = request.FILES.get('foto')
 
         if equipamento.foto:
-            # Verifica se um novo arquivo de foto foi enviado
             if foto:
-                # Remove a foto anterior
                 equipamento.foto.delete()
                 equipamento.foto = foto
         else:
-            # Se não houver uma foto associada ao equipamento, associa o novo arquivo de foto
-            # Verifica se um novo arquivo de foto foi enviado
             if foto:
                 equipamento.foto = foto
 
         equipamento.save()
-        return redirect('core:dashboard')
+        return redirect('core:editar_equipamento', equipamento_id=equipamento_id)
 
-    # Obter a URL da foto e remover a parte indesejada
     if equipamento.foto:
         foto_equipamento = equipamento.foto.url.replace('/myproject/core', '')
         context = {'equipamento': equipamento, 'foto_equipamento': foto_equipamento}
@@ -253,9 +252,6 @@ def editar_equipamento(request, equipamento_id):
         context = {'equipamento': equipamento}        
 
     return render(request, 'form_equipamento.html', context)
-
-
-import shutil
 
 def criar_equipamento(request):
     if request.method == 'POST':
@@ -288,6 +284,7 @@ def criar_equipamento(request):
         return redirect('core:dashboard')
 
     return render(request, 'form_equipamento.html')
+    
 
 def remover_foto(request, equipamento_id):
     equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
@@ -304,3 +301,10 @@ def remover_foto(request, equipamento_id):
 
     # Redirecionar para a página de edição do equipamento
     return redirect('core:editar_equipamento', equipamento_id=equipamento.id)
+
+
+def desabilitar_equipamento(request, equipamento_id):
+    equipamento = get_object_or_404(Equipamento, id=equipamento_id)
+    equipamento.status = "Excluído"
+    equipamento.save()
+    return redirect('core:editar_equipamento', equipamento_id=equipamento_id)
