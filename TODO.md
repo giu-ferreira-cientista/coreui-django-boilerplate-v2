@@ -1,0 +1,2 @@
+- Caminho das fotos dentro do container pra fechar o CRUD
+- Mapear esse caminho no volume do docker no host
