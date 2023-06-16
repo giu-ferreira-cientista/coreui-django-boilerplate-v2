@@ -101,3 +101,23 @@ python manage.py migrate
 ## A cada model criado 
 python manage.py makemigrations
 python manage.py migrate
+
+
+## Setup Postgres
+sudo apt update
+sudo apt-get install postgresql
+sudo service postgresql start
+cd /etc/postgresql/14/main
+sudo nano pg_hba.conf
+"change peer to trust"
+sudo service postgresql restart
+psql -U postgres
+ALTER USER postgres WITH PASSWORD 'postgres';
+sudo nano pg_hba.conf
+"change trust to md5"
+sudo service postgresql restart
+psql -U postgres
+CREATE USER myuser WITH PASSWORD 'mypassword';
+CREATE DATABASE mydatabase;
+GRANT ALL PRIVILEGES ON DATABASE mydatabase TO myuser;
+python manage.py migrate

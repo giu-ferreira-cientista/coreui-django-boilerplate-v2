@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Usuario, Emprestimo, Reserva, Equipamento
-
+import os
+import uuid
 
 def index(request):
     template_name = 'index.html'
@@ -27,17 +28,15 @@ def dashboard(request):
     reservas = Reserva.objects.all()
     equipamentos = Equipamento.objects.all()
 
-    total_usuarios = usuarios.count()  # Total de usuários
-
     context = {
         'usuarios': usuarios,
         'emprestimos': emprestimos,
         'reservas': reservas,
-        'equipamentos': equipamentos,
-        'total_usuarios': total_usuarios
+        'equipamentos': equipamentos
     }
 
     return render(request, 'dashboard.html', context)
+
 
 #def dashboard(request):
 #    template_name = 'dashboard.html'
@@ -222,3 +221,86 @@ def error500(request):
 def invoice(request):
     template_name = 'invoice.html'
     return render(request, template_name)
+
+def editar_equipamento(request, equipamento_id):
+    equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
+
+    if request.method == 'POST':
+        equipamento.nome = request.POST['nome']
+        equipamento.status = request.POST['status']
+        foto = request.FILES.get('foto')  # Obtém o arquivo de imagem enviado
+
+        if equipamento.foto:
+            # Verifica se um novo arquivo de foto foi enviado
+            if foto:
+                # Remove a foto anterior
+                equipamento.foto.delete()
+                equipamento.foto = foto
+        else:
+            # Se não houver uma foto associada ao equipamento, associa o novo arquivo de foto
+            # Verifica se um novo arquivo de foto foi enviado
+            if foto:
+                equipamento.foto = foto
+
+        equipamento.save()
+        return redirect('core:dashboard')
+
+    # Obter a URL da foto e remover a parte indesejada
+    if equipamento.foto:
+        foto_equipamento = equipamento.foto.url.replace('/myproject/core', '')
+        context = {'equipamento': equipamento, 'foto_equipamento': foto_equipamento}
+    else:
+        context = {'equipamento': equipamento}        
+
+    return render(request, 'form_equipamento.html', context)
+
+
+import shutil
+
+def criar_equipamento(request):
+    if request.method == 'POST':
+        nome = request.POST['nome']
+        status = request.POST['status']
+        foto = request.FILES.get('foto')  # Obtém o arquivo de imagem enviado
+
+        equipamento = Equipamento(nome=nome, status=status, foto=foto)
+        equipamento.save()
+
+        # Renomear a foto para o ID do equipamento
+        if foto:
+            novo_nome_arquivo = f"{equipamento.id}.jpg"
+
+            # Obter o caminho completo do arquivo antigo
+            caminho_arquivo_antigo = equipamento.foto.path
+
+            # Gerar o caminho completo do novo arquivo
+            caminho_novo_arquivo_banco = '/static/img/equipments/' + novo_nome_arquivo
+
+            caminho_novo_arquivo_fisico = '/workspace/coreui-django-boilerplate-v2/myproject/core/' + caminho_novo_arquivo_banco
+
+            # Renomear o arquivo físico
+            shutil.move(caminho_arquivo_antigo, caminho_novo_arquivo_fisico)
+
+            equipamento.foto.name = caminho_novo_arquivo_banco
+            equipamento.save()
+
+
+        return redirect('core:dashboard')
+
+    return render(request, 'form_equipamento.html')
+
+def remover_foto(request, equipamento_id):
+    equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
+
+    # Verificar se o equipamento possui uma foto
+    if equipamento.foto:
+        # Apagar o arquivo da foto na origem
+        arquivo_foto = equipamento.foto.path
+        if os.path.exists(arquivo_foto):
+            os.remove(arquivo_foto)
+
+        # Remover a foto do banco de dados
+        equipamento.foto.delete()
+
+    # Redirecionar para a página de edição do equipamento
+    return redirect('core:editar_equipamento', equipamento_id=equipamento.id)

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="card-header">Equipamento
+    <a class="btn btn-sm btn-secondary float-right mr-1 d-print-none" href="#" onclick="javascript:window.print();">
+      <i class="fa fa-print"></i> Print</a>
+    <a class="btn btn-sm btn-info float-right mr-1 d-print-none" href="#">
+      <i class="fa fa-save"></i> Save</a>
+  </div>
+  <div class="card-body">
+    <form method="post" action="{% if equipamento.id %}{% url 'core:editar_equipamento' equipamento.id %}{% else %}{% url 'core:criar_equipamento' %}{% endif %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-user"></i>
+            </span>
+          </div>
+          <input class="form-control" id="nome" type="text" name="nome" placeholder="Nome" value="{{ equipamento.nome }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fa fa-asterisk"></i>
+            </span>
+          </div>
+          <select class="form-control" id="status" name="status">
+            <option value="Disponível" {% if equipamento.status == 'Disponível' %}selected{% endif %}>Disponível</option>
+            <option value="Excluído" {% if equipamento.status == 'Excluído' %}selected{% endif %}>Excluído</option>
+            <option value="Em Reparo" {% if equipamento.status == 'Em Reparo' %}selected{% endif %}>Em Reparo</option>
+            <option value="Emprestado" {% if equipamento.status == 'Emprestado' %}selected{% endif %}>Emprestado</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="foto">Foto do Equipamento</label>
+        <input type="file" class="form-control-file" id="foto" name="foto">
+      </div>
+      <div class="form-group">
+        {% if equipamento.foto %}
+          <img src="{{ foto_equipamento }}" alt="Foto do Equipamento" style="max-width: 200px;">
+          <div class="mt-2">          
+            <a href="#" class="btn btn-sm btn-danger" onclick="confirmarRemoverFoto({{ equipamento.id }})">Remover Foto</a>
+          </div>
+        {% endif %}
+      </div>
+      <div class="form-group form-actions">
+        <button class="btn btn-sm btn-success" type="submit">{% if equipamento.id %}Salvar{% else %}Criar{% endif %}</button>
+      </div>
+    </form>
+  </div>  
+</div>
+<script>
+  function confirmarRemoverFoto(equipamentoId) {
+    if (confirm('Tem certeza de que deseja remover a foto?')) {
+      // Enviar uma solicitação POST para o servidor para remover a foto
+      fetch('/coreui/equipamentos/' + equipamentoId + '/remover_foto/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          // Recarregar a página para refletir as alterações
+          location.reload();
+        } else {
+          // Tratar erros de remoção da foto, se necessário
+          console.error('Ocorreu um erro ao remover a foto');
+        }
+      })
+      .catch(error => {
+        console.error('Ocorreu um erro ao remover a foto', error);
+      });
+    }
+  }
+</script>
+{% endblock content %}

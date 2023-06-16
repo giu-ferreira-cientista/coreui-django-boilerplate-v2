@@ -43,6 +43,9 @@ url_coreui = [
     path('404/', v.error404, name='error404'),
     path('500/', v.error500, name='error500'),
     path('invoice/', v.invoice, name='invoice'),
+    path('equipamentos/<int:equipamento_id>/editar/', v.editar_equipamento, name='editar_equipamento'),
+    path('equipamentos/criar/', v.criar_equipamento, name='criar_equipamento'),
+    path('equipamentos/<int:equipamento_id>/remover_foto/', v.remover_foto, name='remover_foto'),
 ]
 
 
@@ -52,4 +55,5 @@ urlpatterns = [
     path('detail/', v._detail, name='detail'),
     path('add/', v._create, name='create'),
     path('coreui/', include(url_coreui)),
+    
 ]
