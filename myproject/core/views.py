@@ -308,3 +308,13 @@ def desabilitar_equipamento(request, equipamento_id):
     equipamento.status = "Excluído"
     equipamento.save()
     return redirect('core:editar_equipamento', equipamento_id=equipamento_id)
+
+def pesquisar_equipamentos(request):
+    # Obtém o texto de pesquisa do parâmetro GET 'q'
+    query = request.GET.get('q')
+
+    # Filtra os equipamentos com base na consulta de pesquisa
+    equipamentos = Equipamento.objects.filter(nome__icontains=query)
+
+    # Renderiza o template com os equipamentos filtrados
+    return render(request, 'dashboard.html', {'equipamentos': equipamentos})    

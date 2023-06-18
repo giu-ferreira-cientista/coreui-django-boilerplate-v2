@@ -1,0 +1,48 @@
+{% load static %}
+
+{% block content %}
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Equipamento</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for equipamento in equipamentos %}    
+                        <tr>                            
+                            <td>
+                                {% if equipamento.foto %}
+                                  <img class="img-avatar" src="{% static 'img/equipments/' %}{{ equipamento.id }}.jpg" alt="Foto do Equipamento" style="max-width: 100px; max-height: 100px; border-radius: 1em;">
+                                {% else %}
+                                  <img class="img-avatar" src="{% static 'img/equipments/default.jpg' %}" alt="Foto Padrão" style="max-width: 100px; max-height: 100px; border-radius: 1em;">
+                                {% endif %}
+                            </td>
+                            <td>{{ equipamento.nome }}</td>
+                            <td>
+                                <span class="{{ equipamento.get_status_class }}">{{ equipamento.get_status_display }}</span>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" href="{% url 'core:editar_equipamento' equipamento.id %}">Editar</a>
+                                        <a class="dropdown-item" href="#">Reservar</a>
+                                        <a class="dropdown-item" href="#">Devolver</a>
+                                        <a class="dropdown-item" href="#">Emprestar</a>
+                                        <a class="dropdown-item" href="{% url 'core:editar_equipamento' equipamento.id %}">Excluir</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">Nenhum equipamento encontrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                  
+
+{% endblock content %}
