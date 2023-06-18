@@ -3,6 +3,7 @@ services:
   db:
     image: postgres
     container_name: db
+    restart: always
     volumes:
       - ./data:/var/lib/postgresql/data
     environment:

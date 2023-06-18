@@ -48,6 +48,7 @@ url_coreui = [
     path('equipamentos/<int:equipamento_id>/remover_foto/', v.remover_foto, name='remover_foto'),
     path('equipamentos/<int:equipamento_id>/desabilitar/', v.desabilitar_equipamento, name='desabilitar_equipamento'),
     path('equipamentos/pesquisar/', v.pesquisar_equipamentos, name='pesquisar_equipamentos'),
+    path('equipamentos/', v.listar_equipamentos, name='listar_equipamentos'),
 ]
 
 

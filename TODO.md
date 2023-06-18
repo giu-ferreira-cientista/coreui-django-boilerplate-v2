@@ -1,5 +1,5 @@
 - Caminho das fotos dentro do container pra fechar o CRUD
-- Mapear esse caminho no volume do docker no host
+X Mapear esse caminho no volume do docker no host
 - Clicar na imagem para editar
 - Acoes: editar, reservar, emprestar, devolver
 - Ordem aparicao: Disponivel, Emprestado, Em Reparo, Excluido 

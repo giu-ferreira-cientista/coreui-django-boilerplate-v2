@@ -25,24 +25,8 @@ def _create(request):
     return render(request, template_name)
 
 def dashboard(request):
-    usuarios = Usuario.objects.all()
-    emprestimos = Emprestimo.objects.all()
-    reservas = Reserva.objects.all()
-    equipamentos = Equipamento.objects.all()
-
-    context = {
-        'usuarios': usuarios,
-        'emprestimos': emprestimos,
-        'reservas': reservas,
-        'equipamentos': equipamentos
-    }
-
-    return render(request, 'dashboard.html', context)
-
-
-#def dashboard(request):
-#    template_name = 'dashboard.html'
-#    return render(request, template_name)
+    template_name = 'dashboard.html'
+    return render(request, template_name)
 
 
 def breadcrumb(request):
@@ -226,6 +210,16 @@ def invoice(request):
 
 from django.shortcuts import redirect, render
 
+def listar_equipamentos(request):
+    equipamentos = Equipamento.objects.all()
+
+    context = {
+        'equipamentos': equipamentos
+    }
+
+    return render(request, 'lista_equipamentos.html', context)
+
+
 def editar_equipamento(request, equipamento_id):
     equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
 
@@ -281,7 +275,7 @@ def criar_equipamento(request):
             equipamento.save()
 
 
-        return redirect('core:dashboard')
+        return redirect('core:listar_equipamentos')
 
     return render(request, 'form_equipamento.html')
     
@@ -317,4 +311,4 @@ def pesquisar_equipamentos(request):
     equipamentos = Equipamento.objects.filter(nome__icontains=query)
 
     # Renderiza o template com os equipamentos filtrados
-    return render(request, 'dashboard.html', {'equipamentos': equipamentos})    
+    return render(request, 'lista_equipamentos.html', {'equipamentos': equipamentos})    
