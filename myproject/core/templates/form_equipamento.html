@@ -2,15 +2,15 @@
 {% load static %}
 {% block content %}
 <div class="card">
-  <div class="card-header">Equipamento
-    <a class="btn btn-sm btn-secondary float-right mr-1 d-print-none" href="#" onclick="javascript:window.print();">
-      <i class="fa fa-print"></i> Print</a>
-    <a class="btn btn-sm btn-info float-right mr-1 d-print-none" href="#">
-      <i class="fa fa-save"></i> Save</a>
+  <form id="form-equipamento" method="post" action="{% if equipamento.id %}{% url 'core:editar_equipamento' equipamento.id %}{% else %}{% url 'core:criar_equipamento' %}{% endif %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="card-header">Equipamento    
+      <button class="btn btn-sm btn-success float-right mr-1" type="button" onclick="confirmarSalvar()">{% if equipamento.id %}Salvar{% else %}Criar{% endif %}</button>
+      {% if equipamento.id and equipamento.status != 'Excluído' %}
+        <button class="btn btn-sm btn-danger float-right mr-1" type="button" onclick="confirmarExclusao()">Excluir</button>
+      {% endif %}    
   </div>
   <div class="card-body">
-    <form id="form-equipamento" method="post" action="{% if equipamento.id %}{% url 'core:editar_equipamento' equipamento.id %}{% else %}{% url 'core:criar_equipamento' %}{% endif %}" enctype="multipart/form-data">
-      {% csrf_token %}
       <div class="form-group">
         {% if equipamento.id %}
         <div class="input-group">
@@ -62,14 +62,8 @@
           <img id="foto-preview" src="{% static 'img/equipments/default.jpg' %}" alt="Foto do Equipamento" style="max-width: 200px;">
         {% endif %}
       </div>
-      <div class="form-group form-actions">
-        <button class="btn btn-sm btn-success" type="button" onclick="confirmarSalvar()">{% if equipamento.id %}Salvar{% else %}Criar{% endif %}</button>
-        {% if equipamento.id and equipamento.status != 'Excluído' %}
-          <button class="btn btn-sm btn-danger" type="button" onclick="confirmarExclusao()">Excluir</button>
-        {% endif %}
- </div>
-    </form>
   </div>  
+ </form>
 </div>
 <script>
   function exibirFoto(input) {

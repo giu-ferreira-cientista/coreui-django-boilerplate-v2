@@ -31,6 +31,27 @@ def editar_equipamento(request, equipamento_id):
                 equipamento.foto = foto
 
         equipamento.save()
+
+        # Renomear a foto para o ID do equipamento
+        if foto:
+            novo_nome_arquivo = f"{equipamento.id}.jpg"
+
+            # Obter o caminho completo do arquivo antigo
+            caminho_arquivo_antigo = equipamento.foto.path
+
+            # Gerar o caminho completo do novo arquivo
+            caminho_novo_arquivo_banco = 'static/img/equipments/' + novo_nome_arquivo
+
+            caminho_novo_arquivo_fisico = '/workspace/coreui-django-boilerplate-v2/myproject/core/' + caminho_novo_arquivo_banco
+
+            # Renomear o arquivo físico
+            shutil.move(caminho_arquivo_antigo, caminho_novo_arquivo_fisico)
+
+            equipamento.foto.name = caminho_novo_arquivo_banco
+
+            equipamento.save()           
+        
+
         return redirect('core:editar_equipamento', equipamento_id=equipamento_id)
 
     if equipamento.foto:
@@ -58,7 +79,7 @@ def criar_equipamento(request):
             caminho_arquivo_antigo = equipamento.foto.path
 
             # Gerar o caminho completo do novo arquivo
-            caminho_novo_arquivo_banco = '/static/img/equipments/' + novo_nome_arquivo
+            caminho_novo_arquivo_banco = 'static/img/equipments/' + novo_nome_arquivo
 
             caminho_novo_arquivo_fisico = '/workspace/coreui-django-boilerplate-v2/myproject/core/' + caminho_novo_arquivo_banco
 
@@ -80,7 +101,7 @@ def remover_foto_equipamento(request, equipamento_id):
     # Verificar se o equipamento possui uma foto
     if equipamento.foto:
         # Apagar o arquivo da foto na origem
-        arquivo_foto = equipamento.foto.path
+        arquivo_foto = '/workspace/coreui-django-boilerplate-v2/myproject/core' + equipamento.foto.name
         if os.path.exists(arquivo_foto):
             os.remove(arquivo_foto)
 
