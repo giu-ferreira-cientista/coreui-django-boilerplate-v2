@@ -4,21 +4,22 @@ import os
 import uuid
 import shutil
 
-def listar_equipamentos(request):
-    equipamentos = Equipamento.objects.all()
+from django.urls import reverse
 
-    context = {
-        'equipamentos': equipamentos
-    }
-
-    return render(request, 'lista_equipamentos.html', context)
-
+from django.core.paginator import Paginator
 
 def editar_equipamento(request, equipamento_id):
     equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
+    page_title = 'Equipamento - Detalhes'
+    breadcrumb = [
+        {'title': 'Home', 'url': reverse('core:index')},
+        {'title': 'Equipamentos', 'url': reverse('core:listar_equipamentos')},
+        {'title': 'Equipamento - Detalhes', 'url': '.'},
+    ]
 
     if request.method == 'POST':
         equipamento.nome = request.POST['nome']
+        equipamento.categoria = request.POST['categoria']
         equipamento.status = request.POST['status']
         foto = request.FILES.get('foto')
 
@@ -56,15 +57,22 @@ def editar_equipamento(request, equipamento_id):
 
     if equipamento.foto:
         foto_equipamento = equipamento.foto.url.replace('/myproject/core', '')
-        context = {'equipamento': equipamento, 'foto_equipamento': foto_equipamento}
+        context = {'equipamento': equipamento, 'foto_equipamento': foto_equipamento, 'breadcrumb': breadcrumb}
     else:
-        context = {'equipamento': equipamento}        
+        context = {'equipamento': equipamento, 'breadcrumb': breadcrumb}
 
     return render(request, 'form_equipamento.html', context)
 
 def criar_equipamento(request):
+    breadcrumb = [
+        {'title': 'Home', 'url': reverse('core:index')},
+        {'title': 'Equipamentos', 'url': reverse('core:listar_equipamentos')},
+        {'title': 'Criar Equipamento', 'url': '.'},
+    ]
+
     if request.method == 'POST':
         nome = request.POST['nome']
+        categoria = request.POST['categoria']
         status = request.POST['status']
         foto = request.FILES.get('foto')  # Obtém o arquivo de imagem enviado
 
@@ -89,11 +97,10 @@ def criar_equipamento(request):
             equipamento.foto.name = caminho_novo_arquivo_banco
             equipamento.save()
 
-
         return redirect('core:listar_equipamentos')
 
-    return render(request, 'form_equipamento.html')
-    
+    context = {'breadcrumb': breadcrumb}
+    return render(request, 'form_equipamento.html', context)    
 
 def remover_foto_equipamento(request, equipamento_id):
     equipamento = get_object_or_404(Equipamento, pk=equipamento_id)
@@ -111,19 +118,40 @@ def remover_foto_equipamento(request, equipamento_id):
     # Redirecionar para a página de edição do equipamento
     return redirect('core:editar_equipamento', equipamento_id=equipamento.id)
 
-
 def desabilitar_equipamento(request, equipamento_id):
     equipamento = get_object_or_404(Equipamento, id=equipamento_id)
     equipamento.status = "Excluído"
     equipamento.save()
     return redirect('core:editar_equipamento', equipamento_id=equipamento_id)
 
-def pesquisar_equipamentos(request):
-    # Obtém o texto de pesquisa do parâmetro GET 'q'
+def listar_equipamentos(request):
+    equipamentos = Equipamento.objects.all()
     query = request.GET.get('q')
+    coluna = request.GET.get('coluna')
+    page_title = 'Equipamentos'
+    breadcrumb = [
+        {'title': 'Home', 'url': reverse('core:index')},
+        {'title': 'Equipamentos', 'url': '.'},
+    ]
 
-    # Filtra os equipamentos com base na consulta de pesquisa
-    equipamentos = Equipamento.objects.filter(nome__icontains=query)
+    if query:
+        equipamentos = equipamentos.filter(nome__icontains=query)
 
-    # Renderiza o template com os equipamentos filtrados
-    return render(request, 'lista_equipamentos.html', {'equipamentos': equipamentos})    
+    if coluna == 'nome':
+        equipamentos = equipamentos.order_by('nome')
+    elif coluna == 'categoria':
+        equipamentos = equipamentos.order_by('categoria')
+    elif coluna == 'status':
+        equipamentos = equipamentos.order_by('status')
+
+    total_equipamentos = len(equipamentos)
+
+    # Configurar a quantidade de itens por página
+    itens_por_pagina = 5
+    paginator = Paginator(equipamentos, itens_por_pagina)
+
+    # Obter o número da página atual
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'lista_equipamentos.html', {'equipamentos': page_obj, 'total_equipamentos': total_equipamentos, 'query': query, 'coluna': coluna, 'page_title': page_title, 'breadcrumb': breadcrumb})

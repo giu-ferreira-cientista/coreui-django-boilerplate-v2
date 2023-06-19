@@ -37,6 +37,20 @@
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">
+              <i class="fa fa-list"></i>
+            </span>
+          </div>
+          <select class="form-control" id="categoria" name="categoria">
+            <option value="filmadoras" {% if equipamento.cateoria == 'filmadoras' %}selected{% endif %}>Filmadoras</option>
+            <option value="microfones" {% if equipamento.categoria == 'microfones' %}selected{% endif %}>Microfones</option>
+            <option value="kits" {% if equipamento.categoria == 'kits' %}selected{% endif %}>Kits</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
               <i class="fa fa-edit"></i>
             </span>
           </div>

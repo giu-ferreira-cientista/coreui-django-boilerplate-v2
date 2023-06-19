@@ -1,6 +1,6 @@
 from django.urls import include, path
 from myproject.core import views_global as v
-from .views.equipamentos import listar_equipamentos, criar_equipamento, editar_equipamento, desabilitar_equipamento, pesquisar_equipamentos, remover_foto_equipamento
+from .views.equipamentos import listar_equipamentos, criar_equipamento, editar_equipamento, desabilitar_equipamento, remover_foto_equipamento
 
 
 app_name = 'core'
@@ -47,9 +47,8 @@ url_coreui = [
     path('equipamentos/<int:equipamento_id>/editar/', editar_equipamento, name='editar_equipamento'),
     path('equipamentos/criar/', criar_equipamento, name='criar_equipamento'),
     path('equipamentos/<int:equipamento_id>/remover_foto/', remover_foto_equipamento, name='remover_foto_equipamento'),
-    path('equipamentos/<int:equipamento_id>/desabilitar/', desabilitar_equipamento, name='desabilitar_equipamento'),
-    path('equipamentos/pesquisar/', pesquisar_equipamentos, name='pesquisar_equipamentos'),
-    path('equipamentos/', listar_equipamentos, name='listar_equipamentos'),
+    path('equipamentos/<int:equipamento_id>/desabilitar/', desabilitar_equipamento, name='desabilitar_equipamento'),    
+    path('equipamentos/', listar_equipamentos, name='listar_equipamentos'),    
 ]
 
 

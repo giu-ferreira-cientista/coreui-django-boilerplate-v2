@@ -3,11 +3,16 @@ from .models import Usuario, Emprestimo, Reserva, Equipamento
 import os
 import uuid
 import shutil
+from django.urls import reverse
 
 
 def index(request):
+    page_title = 'Home'
+    breadcrumb = [
+        {'title': 'Home', 'url': reverse('core:index')},
+    ]
     template_name = 'index.html'
-    return render(request, template_name)
+    return render(request, template_name, {'page_title': page_title, 'breadcrumb': breadcrumb})
 
 
 def _list(request):

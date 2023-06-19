@@ -10,7 +10,7 @@
         <div class="h1 text-muted text-right mb-4">
             <i class="fa fa-video-camera fa-lg mt-4"></i>
         </div>
-        <div class="text-value">{{ equipamentos|length }}</div>
+        <div class="text-value">{{ total_equipamentos }} </div>
         <small class="text-muted text-uppercase font-weight-bold">Equipamentos</small>
         <div class="progress progress-xs mt-3 mb-0">
             <div class="progress-bar bg-info" role="progressbar" width="80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
@@ -22,10 +22,15 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <i class="fa fa-align-justify"></i> Equipamentos
-                <form class="form-inline ml-auto" method="get" action="{% url 'core:pesquisar_equipamentos' %}">
+                <i class="fa fa-align-justify"></i>
+                <form class="form-inline ml-auto" method="get" action="{% url 'core:listar_equipamentos' %}">
                     <div class="input-group">
                         <input type="text" id="search-equipamento" class="form-control" style="width:350px;" name="q" placeholder="Pesquisar...">
+                        {% if request.GET.q %}
+                            <div class="input-group-append">
+                                <a href="{% url 'core:listar_equipamentos' %}" class="btn btn-outline-primary">Remover busca: {{ request.GET.q }}</a>
+                            </div>
+                        {% endif %}
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="submit">
                                 <i class="fa fa-search"></i>
@@ -36,12 +41,14 @@
                 <a href="{% url 'core:criar_equipamento' %}" class="btn btn-sm btn-success ml-auto">Novo Equipamento</a>
             </div>
             <div class="card-body">
-            <table class="table table-responsive-sm table-striped">
+            <table class="table table-responsive-sm table-striped" id="equipment-table">
                     <thead>
                         <tr>
                             <th>Foto</th>
-                            <th>Equipamento</th>
-                            <th>Status</th>
+                            <a href="{% url 'core:listar_equipamentos' %}?{% if query %}q={{ query }}&{% endif %}coluna=nome"></a>
+                            <th><a href="{% url 'core:listar_equipamentos' %}?{% if query %}q={{ query }}&{% endif %}coluna=nome">Equipamento</a></th>
+                            <th><a href="{% url 'core:listar_equipamentos' %}?{% if query %}q={{ query }}&{% endif %}coluna=categoria">Categoria</a></th>
+                            <th><a href="{% url 'core:listar_equipamentos' %}?{% if query %}q={{ query }}&{% endif %}coluna=status">Status</a></th>
                             <th>Ação</th>
                         </tr>
                     </thead>
@@ -58,6 +65,7 @@
                                 </a>
                             </td>
                             <td>{{ equipamento.nome }}</td>
+                            <td>{{ equipamento.categoria }}</td>
                             <td>
                                 <span class="{{ equipamento.get_status_class }}">{{ equipamento.get_status_display }}</span>
                             </td>
@@ -83,26 +91,30 @@
                         {% endfor %}
                     </tbody>                  
                 </table>
+                <!-- Paginação -->
                 <ul class="pagination">
-                    <li class="page-item">
-                      <a class="page-link" href="#">Prev</a>
-                    </li>
-                    <li class="page-item active">
-                      <a class="page-link" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">4</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href="#">Next</a>
-                    </li>
-                  </ul>
+                  {% if equipamentos.has_previous %}
+                  <li class="page-item">
+                      <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}coluna={{ coluna }}&page={{ equipamentos.previous_page_number }}">Prev</a>
+                  </li>
+                  {% endif %}
+                  {% for num in equipamentos.paginator.page_range %}
+                  {% if equipamentos.number == num %}
+                  <li class="page-item active">
+                      <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}coluna={{ coluna }}&page={{ num }}">{{ num }}</a>
+                  </li>
+                  {% else %}
+                  <li class="page-item">
+                      <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}coluna={{ coluna }}&page={{ num }}">{{ num }}</a>
+                  </li>
+                  {% endif %}
+                  {% endfor %}
+                  {% if equipamentos.has_next %}
+                  <li class="page-item">
+                      <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}coluna={{ coluna }}&page={{ equipamentos.next_page_number }}">Next</a>
+                  </li>
+                  {% endif %}
+              </ul>
             </div>
         </div>
     </div>

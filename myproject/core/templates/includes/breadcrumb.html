@@ -1,23 +1,8 @@
-<!-- Breadcrumb-->
 <ol class="breadcrumb">
-  <li class="breadcrumb-item">
-    <a href="{% url 'core:index' %}">Home</a>
-  </li>
-  <li class="breadcrumb-item">
-    <a href=".">List</a>
-  </li>
-  <li class="breadcrumb-item active">Dashboard</li>
-  <!-- Breadcrumb Menu-->
-  <li class="breadcrumb-menu d-md-down-none">
-    <div class="btn-group" role="group" aria-label="Button group">
-      <a class="btn" href="">
-        <i class="icon-speech"></i>
-      </a>
-      <a class="btn" href="{% url 'core:index' %}">
-        <i class="icon-graph"></i>  Dashboard</a>
-      <a class="btn" href="">
-        <i class="icon-settings"></i>  Settings</a>
-    </div>
-  </li>
+  {% for item in breadcrumb %}
+    <li class="breadcrumb-item">
+      <a href="{{ item.url }}">{{ item.title }}</a>
+    </li>
+  {% endfor %}
   {% block breadcrumb %}{% endblock breadcrumb %}
 </ol>

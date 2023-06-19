@@ -14,6 +14,12 @@ class Reserva(models.Model):
     # outros campos específicos do modelo Reserva
 
 class Equipamento(models.Model):
+    CATEGORY_CHOICES = [
+        ('filmadoras', 'filmadoras'),
+        ('microfones', 'microfones'),
+        ('kits', 'kits'),        
+    ]
+
     STATUS_CHOICES = [
         ('disponivel', 'Disponível'),
         ('excluido', 'Excluído'),
@@ -24,10 +30,9 @@ class Equipamento(models.Model):
 
     id = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100, default="")
+    categoria = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='filmadoras')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Disponível')
     foto = models.ImageField(upload_to='myproject/core/static/img/equipments/', blank=True, null=True)
-
-
     # outros campos específicos do modelo Equipamento
 
     def __str__(self):
