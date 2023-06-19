@@ -1,5 +1,6 @@
 from django.urls import include, path
-from myproject.core import views as v
+from myproject.core import views_global as v
+from .views.equipamentos import listar_equipamentos, criar_equipamento, editar_equipamento, desabilitar_equipamento, pesquisar_equipamentos, remover_foto_equipamento
 
 
 app_name = 'core'
@@ -43,12 +44,12 @@ url_coreui = [
     path('404/', v.error404, name='error404'),
     path('500/', v.error500, name='error500'),
     path('invoice/', v.invoice, name='invoice'),
-    path('equipamentos/<int:equipamento_id>/editar/', v.editar_equipamento, name='editar_equipamento'),
-    path('equipamentos/criar/', v.criar_equipamento, name='criar_equipamento'),
-    path('equipamentos/<int:equipamento_id>/remover_foto/', v.remover_foto, name='remover_foto'),
-    path('equipamentos/<int:equipamento_id>/desabilitar/', v.desabilitar_equipamento, name='desabilitar_equipamento'),
-    path('equipamentos/pesquisar/', v.pesquisar_equipamentos, name='pesquisar_equipamentos'),
-    path('equipamentos/', v.listar_equipamentos, name='listar_equipamentos'),
+    path('equipamentos/<int:equipamento_id>/editar/', editar_equipamento, name='editar_equipamento'),
+    path('equipamentos/criar/', criar_equipamento, name='criar_equipamento'),
+    path('equipamentos/<int:equipamento_id>/remover_foto/', remover_foto_equipamento, name='remover_foto_equipamento'),
+    path('equipamentos/<int:equipamento_id>/desabilitar/', desabilitar_equipamento, name='desabilitar_equipamento'),
+    path('equipamentos/pesquisar/', pesquisar_equipamentos, name='pesquisar_equipamentos'),
+    path('equipamentos/', listar_equipamentos, name='listar_equipamentos'),
 ]
 
 
